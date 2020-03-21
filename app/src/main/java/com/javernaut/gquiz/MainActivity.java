@@ -18,7 +18,7 @@ public class MainActivity extends LoggingActivity {
     private Button nextButton;
     private TextView questionView;
 
-    private Question[] mQuestionBank = new Question[] {
+    private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_australia, true),
             new Question(R.string.question_oceans, true),
             new Question(R.string.question_mideast, false),
