@@ -33,9 +33,19 @@
 
     <Button
         android:id="@+id/next_button"
-        android:drawableRight="@drawable/arrow_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:drawableRight="@drawable/arrow_right"
         android:text="@string/next_button" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="50dp" />
+
+    <Button
+        android:id="@+id/check_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/check_button" />
 
 </LinearLayout>

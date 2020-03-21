@@ -16,6 +16,7 @@ public class MainActivity extends LoggingActivity {
     private Button trueButton;
     private Button falseButton;
     private Button nextButton;
+    private Button checkButton;
     private TextView questionView;
 
     private Question[] mQuestionBank = new Question[]{
@@ -27,7 +28,13 @@ public class MainActivity extends LoggingActivity {
             new Question(R.string.question_asia, true)*/
     };
 
+    private int numberOfQuestions = mQuestionBank.length;
+    private int answeredQuestions = 0;
+    private int correctAnswers = 0;
     private int currentQuestionIndex = 0;
+
+    private boolean[] answeredQuestionsArray = new boolean[mQuestionBank.length];   //Try to use it later
+    private boolean[] correctAnswersArray = new boolean[mQuestionBank.length];  //And this too
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +48,7 @@ public class MainActivity extends LoggingActivity {
         trueButton = findViewById(R.id.true_button);
         falseButton = findViewById(R.id.false_button);
         nextButton = findViewById(R.id.next_button);
+        checkButton = findViewById(R.id.check_button);
         questionView = findViewById(R.id.question);
 
         applyCurrentQuestion();
@@ -62,17 +70,23 @@ public class MainActivity extends LoggingActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // move to next question
                 if (currentQuestionIndex == mQuestionBank.length - 1) {
                     currentQuestionIndex = 0;
                 } else {
                     currentQuestionIndex++;
                 }
 
-                // apply question
                 applyCurrentQuestion();
             }
         });
+
+        checkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCorrectAnswers(answeredQuestions, numberOfQuestions, correctAnswers);
+            }
+        });
+
     }
 
     @Override
@@ -97,5 +111,12 @@ public class MainActivity extends LoggingActivity {
 
     private void showToast(int textId) {
         Toast.makeText(MainActivity.this, textId, Toast.LENGTH_SHORT).show();
+    }
+
+    private void showCorrectAnswers(int answeredQuestions, int numberOfQuestions, int correctAnswers) {
+        Toast.makeText(MainActivity.this,
+                ("Answered: " + answeredQuestions + "/" + numberOfQuestions + "\n" +
+                        "Correct answers: " + correctAnswers),
+                Toast.LENGTH_LONG).show();
     }
 }
