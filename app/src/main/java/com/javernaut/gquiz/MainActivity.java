@@ -6,6 +6,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.HashMap;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -22,10 +24,10 @@ public class MainActivity extends LoggingActivity {
     private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_australia, true),
             new Question(R.string.question_oceans, true),
-            new Question(R.string.question_mideast, false)/*,
+            new Question(R.string.question_mideast, false),
             new Question(R.string.question_africa, false),
             new Question(R.string.question_americas, true),
-            new Question(R.string.question_asia, true)*/
+            new Question(R.string.question_asia, true)
     };
 
     private int numberOfQuestions = mQuestionBank.length;
@@ -33,8 +35,8 @@ public class MainActivity extends LoggingActivity {
     private int correctAnswers = 0;
     private int currentQuestionIndex = 0;
 
-    private boolean[] answeredQuestionsArray = new boolean[mQuestionBank.length];   //Try to use it later
-    private boolean[] correctAnswersArray = new boolean[mQuestionBank.length];  //And this too
+    private HashMap<Integer, Boolean> answeredQuestionsMap = new HashMap<>();
+    private HashMap<Integer, Boolean> correctAnswersMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +55,16 @@ public class MainActivity extends LoggingActivity {
 
         applyCurrentQuestion();
 
+        for (int index = 0; index < mQuestionBank.length; index++) {
+            answeredQuestionsMap.put(index, false);
+            correctAnswersMap.put(index, false);
+        }
+
         trueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onAnswerSelected(true);
+                makeQuestionAnswered();
             }
         });
 
@@ -64,6 +72,7 @@ public class MainActivity extends LoggingActivity {
             @Override
             public void onClick(View v) {
                 onAnswerSelected(false);
+                makeQuestionAnswered();
             }
         });
 
@@ -83,7 +92,8 @@ public class MainActivity extends LoggingActivity {
         checkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showCorrectAnswers(answeredQuestions, numberOfQuestions, correctAnswers);
+                checkAnsweredAndCorrect();
+                showCorrectAnswers();
             }
         });
 
@@ -105,15 +115,37 @@ public class MainActivity extends LoggingActivity {
 
     private void onAnswerSelected(boolean currentAnswer) {
         boolean wasTheAnswerCorrect = currentAnswer == getCurrentQuestion().getCorrectAnswer();
+        if (wasTheAnswerCorrect) {
+            correctAnswersMap.put(currentQuestionIndex, true);
+        }
 
         showToast(wasTheAnswerCorrect ? R.string.correct_toast : R.string.incorrect_toast);
+    }
+
+    private void makeQuestionAnswered() {
+        answeredQuestionsMap.put(currentQuestionIndex, true);
+    }
+
+    private void checkAnsweredAndCorrect() {
+        answeredQuestions = 0;
+        correctAnswers = 0;
+
+        for (int index = 0; index < answeredQuestionsMap.size(); index++) {
+            if (answeredQuestionsMap.get(index)) {
+                answeredQuestions++;
+            }
+
+            if (correctAnswersMap.get(index)) {
+                correctAnswers++;
+            }
+        }
     }
 
     private void showToast(int textId) {
         Toast.makeText(MainActivity.this, textId, Toast.LENGTH_SHORT).show();
     }
 
-    private void showCorrectAnswers(int answeredQuestions, int numberOfQuestions, int correctAnswers) {
+    private void showCorrectAnswers() {
         Toast.makeText(MainActivity.this,
                 ("Answered: " + answeredQuestions + "/" + numberOfQuestions + "\n" +
                         "Correct answers: " + correctAnswers),
