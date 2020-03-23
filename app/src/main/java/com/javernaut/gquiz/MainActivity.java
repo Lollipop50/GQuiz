@@ -5,13 +5,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.util.HashMap;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class MainActivity extends LoggingActivity {
 
     private static final String KEY_CURRENT_QUESTION_INDEX = "key_current_question_index";
+    private static final String KEY_ANSWERED_QUESTIONS_MAP = "key_answered_questions_map";
+    private static final String KEY_CORRECT_ANSWERS_MAP = "key_correct_answers_map";
 
     private Button trueButton;
     private Button falseButton;
@@ -43,6 +47,13 @@ public class MainActivity extends LoggingActivity {
 
         if (savedInstanceState != null) {
             currentQuestionIndex = savedInstanceState.getInt(KEY_CURRENT_QUESTION_INDEX);
+            answeredQuestionsMap = (HashMap<Integer, Boolean>) savedInstanceState.getSerializable(KEY_ANSWERED_QUESTIONS_MAP);
+            correctAnswersMap = (HashMap<Integer, Boolean>) savedInstanceState.getSerializable(KEY_CORRECT_ANSWERS_MAP);
+        } else {
+            for (int index = 0; index < mQuestionBank.length; index++) {
+                answeredQuestionsMap.put(index, false);
+                correctAnswersMap.put(index, false);
+            }
         }
 
         trueButton = findViewById(R.id.true_button);
@@ -53,10 +64,6 @@ public class MainActivity extends LoggingActivity {
 
         applyCurrentQuestion();
 
-        for (int index = 0; index < mQuestionBank.length; index++) {
-            answeredQuestionsMap.put(index, false);
-            correctAnswersMap.put(index, false);
-        }
 
         trueButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,6 +108,8 @@ public class MainActivity extends LoggingActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(KEY_CURRENT_QUESTION_INDEX, currentQuestionIndex);
+        outState.putSerializable(KEY_ANSWERED_QUESTIONS_MAP, answeredQuestionsMap);
+        outState.putSerializable(KEY_CORRECT_ANSWERS_MAP, correctAnswersMap);
     }
 
     private void applyCurrentQuestion() {
