@@ -6,8 +6,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.HashMap;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -35,10 +33,6 @@ public class MainActivity extends LoggingActivity {
     private int numberOfQuestions = mQuestionBank.length;
     private int currentQuestionIndex = 0;
 
-    private HashMap<Integer, Boolean> answeredQuestionsMap = new HashMap<>();
-    private HashMap<Integer, Boolean> correctAnswersMap = new HashMap<>();
-
-    //These arrays will replace HashMaps in the next commit
     private boolean[] answeredQuestionsArray = new boolean[numberOfQuestions];
     private boolean[] correctAnswersArray = new boolean[numberOfQuestions];
 
@@ -50,12 +44,12 @@ public class MainActivity extends LoggingActivity {
 
         if (savedInstanceState != null) {
             currentQuestionIndex = savedInstanceState.getInt(KEY_CURRENT_QUESTION_INDEX);
-            answeredQuestionsMap = (HashMap<Integer, Boolean>) savedInstanceState.getSerializable(KEY_ANSWERED_QUESTIONS);
-            correctAnswersMap = (HashMap<Integer, Boolean>) savedInstanceState.getSerializable(KEY_CORRECT_ANSWERS);
+            answeredQuestionsArray = savedInstanceState.getBooleanArray(KEY_ANSWERED_QUESTIONS);
+            correctAnswersArray = savedInstanceState.getBooleanArray(KEY_CORRECT_ANSWERS);
         } else {
             for (int index = 0; index < mQuestionBank.length; index++) {
-                answeredQuestionsMap.put(index, false);
-                correctAnswersMap.put(index, false);
+                answeredQuestionsArray[index] = false;
+                correctAnswersArray[index] = false;
             }
         }
 
@@ -107,8 +101,8 @@ public class MainActivity extends LoggingActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(KEY_CURRENT_QUESTION_INDEX, currentQuestionIndex);
-        outState.putSerializable(KEY_ANSWERED_QUESTIONS, answeredQuestionsMap);
-        outState.putSerializable(KEY_CORRECT_ANSWERS, correctAnswersMap);
+        outState.putBooleanArray(KEY_ANSWERED_QUESTIONS, answeredQuestionsArray);
+        outState.putBooleanArray(KEY_CORRECT_ANSWERS, correctAnswersArray);
     }
 
     private void applyCurrentQuestion() {
@@ -122,7 +116,7 @@ public class MainActivity extends LoggingActivity {
     private void onAnswerSelected(boolean currentAnswer) {
         boolean wasTheAnswerCorrect = currentAnswer == getCurrentQuestion().getCorrectAnswer();
         if (wasTheAnswerCorrect) {
-            correctAnswersMap.put(currentQuestionIndex, true);
+            correctAnswersArray[currentQuestionIndex] = true;
         }
 
         makeQuestionAnswered();
@@ -131,19 +125,19 @@ public class MainActivity extends LoggingActivity {
     }
 
     private void makeQuestionAnswered() {
-        answeredQuestionsMap.put(currentQuestionIndex, true);
+        answeredQuestionsArray[currentQuestionIndex] = true;
     }
 
     private void checkAndShowAnswers() {
         int answeredQuestions = 0;
         int correctAnswers = 0;
 
-        for (int index = 0; index < answeredQuestionsMap.size(); index++) {
-            if (answeredQuestionsMap.get(index)) {
+        for (int index = 0; index < answeredQuestionsArray.length; index++) {
+            if (answeredQuestionsArray[index]) {
                 answeredQuestions++;
             }
 
-            if (correctAnswersMap.get(index)) {
+            if (correctAnswersArray[index]) {
                 correctAnswers++;
             }
         }
