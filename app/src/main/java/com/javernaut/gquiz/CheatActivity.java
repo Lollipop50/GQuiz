@@ -39,7 +39,7 @@ public class CheatActivity extends LoggingActivity {
             @Override
             public void onClick(View v) {
                 boolean correctAnswer = getIntent().getBooleanExtra(KEY_CORRECT_ANSWER, false);
-                
+
                 text = String.valueOf(correctAnswer);
                 correctAnswerView.setText(text);
 

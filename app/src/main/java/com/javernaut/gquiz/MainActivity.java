@@ -8,17 +8,20 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class MainActivity extends LoggingActivity {
 
+    private static final String KEY_CURRENT_QUESTION_INDEX = "key_current_question_index";
     private static final int REQUEST_CODE_CHEAT = 42;
 
+    private TextView questionView;
     private Button trueButton;
     private Button falseButton;
-    private Button cheatButton;
     private Button nextButton;
-    private TextView questionView;
+    private Button cheatButton;
+    private Button statsButton;
 
     private Question[] mQuestionBank = new Question[] {
             new Question(R.string.question_australia, true),
@@ -36,11 +39,16 @@ public class MainActivity extends LoggingActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (savedInstanceState != null) {
+            currentQuestionIndex = savedInstanceState.getInt(KEY_CURRENT_QUESTION_INDEX);
+        }
+
+        questionView = findViewById(R.id.question);
         trueButton = findViewById(R.id.true_button);
         falseButton = findViewById(R.id.false_button);
         nextButton = findViewById(R.id.next_button);
         cheatButton = findViewById(R.id.cheat_button);
-        questionView = findViewById(R.id.question);
+        statsButton = findViewById(R.id.stats_button);
 
         applyCurrentQuestion();
 
@@ -58,16 +66,6 @@ public class MainActivity extends LoggingActivity {
             }
         });
 
-        cheatButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(
-                        CheatActivity.makeIntent(MainActivity.this, getCurrentQuestion().getCorrectAnswer()),
-                        REQUEST_CODE_CHEAT
-                );
-            }
-        });
-
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,6 +80,30 @@ public class MainActivity extends LoggingActivity {
                 applyCurrentQuestion();
             }
         });
+
+        cheatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(
+                        CheatActivity.makeIntent(MainActivity.this, getCurrentQuestion().getCorrectAnswer()),
+                        REQUEST_CODE_CHEAT
+                );
+            }
+        });
+
+        statsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                startActivity();
+            }
+        });
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_CURRENT_QUESTION_INDEX, currentQuestionIndex);
     }
 
     @Override
