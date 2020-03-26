@@ -11,17 +11,26 @@ import androidx.annotation.NonNull;
 
 public class CheatActivity extends LoggingActivity {
 
+    TextView correctAnswerView;
+
     private static final String KEY_CORRECT_ANSWER = "key_correct_answer";
+    private static final String KEY_TEXT = "key_text";
     private static final String KEY_RESULT = "key_result";
 
-    private int result = Activity.RESULT_CANCELED;
+    private String text;
+    private int result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cheat);
 
+        correctAnswerView = findViewById(R.id.correct_answer);
+
         if (savedInstanceState != null) {
+            text = savedInstanceState.getString(KEY_TEXT);
+            correctAnswerView.setText(text);
+
             result = savedInstanceState.getInt(KEY_RESULT);
             setResult(result);
         }
@@ -30,9 +39,9 @@ public class CheatActivity extends LoggingActivity {
             @Override
             public void onClick(View v) {
                 boolean correctAnswer = getIntent().getBooleanExtra(KEY_CORRECT_ANSWER, false);
-
-                TextView correctAnswerView = findViewById(R.id.correct_answer);
-                correctAnswerView.setText(String.valueOf(correctAnswer));
+                
+                text = String.valueOf(correctAnswer);
+                correctAnswerView.setText(text);
 
                 result = Activity.RESULT_OK;
                 setResult(result);
@@ -44,6 +53,7 @@ public class CheatActivity extends LoggingActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(KEY_RESULT, result);
+        outState.putString(KEY_TEXT, text);
     }
 
     public static Intent makeIntent(Context context, boolean correctAnswer) {
