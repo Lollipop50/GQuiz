@@ -14,7 +14,13 @@ import androidx.annotation.Nullable;
 public class MainActivity extends LoggingActivity {
 
     private static final String KEY_CURRENT_QUESTION_INDEX = "key_current_question_index";
+    private static final String KEY_ALL_ANSWERS = "key_all_answers";
     private static final int REQUEST_CODE_CHEAT = 42;
+
+    //Is it OK to make these constants not private?
+    static final int CORRECT_ANSWER = 1;
+    static final int INCORRECT_ANSWER = -1;
+    static final int NOT_ANSWERED = 0;
 
     private TextView questionView;
     private Button trueButton;
@@ -34,6 +40,8 @@ public class MainActivity extends LoggingActivity {
 
     private int currentQuestionIndex = 0;
 
+    private int[] allAnswers = new int[mQuestionBank.length];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +49,7 @@ public class MainActivity extends LoggingActivity {
 
         if (savedInstanceState != null) {
             currentQuestionIndex = savedInstanceState.getInt(KEY_CURRENT_QUESTION_INDEX);
+            allAnswers = savedInstanceState.getIntArray(KEY_ALL_ANSWERS);
         }
 
         questionView = findViewById(R.id.question);
@@ -69,14 +78,12 @@ public class MainActivity extends LoggingActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // move to next question
                 if (currentQuestionIndex == mQuestionBank.length - 1) {
                     currentQuestionIndex = 0;
                 } else {
                     currentQuestionIndex++;
                 }
 
-                // apply question
                 applyCurrentQuestion();
             }
         });
@@ -94,7 +101,7 @@ public class MainActivity extends LoggingActivity {
         statsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                startActivity();
+                startActivity(StatsActivity.makeIntent(MainActivity.this, allAnswers));
             }
         });
 
@@ -104,6 +111,7 @@ public class MainActivity extends LoggingActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(KEY_CURRENT_QUESTION_INDEX, currentQuestionIndex);
+        outState.putIntArray(KEY_ALL_ANSWERS, allAnswers);
     }
 
     @Override
@@ -127,6 +135,12 @@ public class MainActivity extends LoggingActivity {
 
     private void onAnswerSelected(boolean currentAnswer) {
         boolean wasTheAnswerCorrect = currentAnswer == getCurrentQuestion().getCorrectAnswer();
+
+        if (wasTheAnswerCorrect) {
+            allAnswers[currentQuestionIndex] = CORRECT_ANSWER;
+        } else {
+            allAnswers[currentQuestionIndex] = INCORRECT_ANSWER;
+        }
 
         showToast(wasTheAnswerCorrect ? R.string.correct_toast : R.string.incorrect_toast);
     }
