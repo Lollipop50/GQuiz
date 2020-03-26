@@ -7,14 +7,24 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 public class CheatActivity extends LoggingActivity {
 
     private static final String KEY_CORRECT_ANSWER = "key_correct_answer";
+    private static final String KEY_RESULT = "key_result";
+
+    private int result = Activity.RESULT_CANCELED;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cheat);
+
+        if (savedInstanceState != null) {
+            result = savedInstanceState.getInt(KEY_RESULT);
+            setResult(result);
+        }
 
         findViewById(R.id.show_correct_answer).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -24,9 +34,16 @@ public class CheatActivity extends LoggingActivity {
                 TextView correctAnswerView = findViewById(R.id.correct_answer);
                 correctAnswerView.setText(String.valueOf(correctAnswer));
 
-                setResult(Activity.RESULT_OK);
+                result = Activity.RESULT_OK;
+                setResult(result);
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_RESULT, result);
     }
 
     public static Intent makeIntent(Context context, boolean correctAnswer) {

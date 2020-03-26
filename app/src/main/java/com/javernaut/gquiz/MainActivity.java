@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
 public class MainActivity extends LoggingActivity {
 
     private static final int REQUEST_CODE_CHEAT = 42;
-    private static final int REQUEST_CODE_CHEAT_2 = 423;
 
     private Button trueButton;
     private Button falseButton;
