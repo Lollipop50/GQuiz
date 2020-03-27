@@ -14,11 +14,9 @@ public class CheatActivity extends LoggingActivity {
     TextView correctAnswerView;
 
     private static final String KEY_CORRECT_ANSWER = "key_correct_answer";
-    private static final String KEY_TEXT = "key_text";
-    private static final String KEY_RESULT = "key_result";
+    private static final String KEY_IS_CHEATER = "key_is_cheater";
 
-    private String text;
-    private int result;
+    private boolean isCheater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,23 +26,15 @@ public class CheatActivity extends LoggingActivity {
         correctAnswerView = findViewById(R.id.correct_answer);
 
         if (savedInstanceState != null) {
-            text = savedInstanceState.getString(KEY_TEXT);
-            correctAnswerView.setText(text);
-
-            result = savedInstanceState.getInt(KEY_RESULT);
-            setResult(result);
+            isCheater = savedInstanceState.getBoolean(KEY_IS_CHEATER);
+            detectCheater();
         }
 
         findViewById(R.id.show_correct_answer).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean correctAnswer = getIntent().getBooleanExtra(KEY_CORRECT_ANSWER, false);
-
-                text = String.valueOf(correctAnswer);
-                correctAnswerView.setText(text);
-
-                result = Activity.RESULT_OK;
-                setResult(result);
+                isCheater = true;
+                detectCheater();
             }
         });
     }
@@ -52,8 +42,15 @@ public class CheatActivity extends LoggingActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(KEY_RESULT, result);
-        outState.putString(KEY_TEXT, text);
+        outState.putBoolean(KEY_IS_CHEATER, isCheater);
+    }
+
+    private void detectCheater() {
+        if (isCheater) {
+            correctAnswerView.setText(String.valueOf(
+                    getIntent().getBooleanExtra(KEY_CORRECT_ANSWER, false)));
+            setResult(Activity.RESULT_OK);
+        }
     }
 
     public static Intent makeIntent(Context context, boolean correctAnswer) {

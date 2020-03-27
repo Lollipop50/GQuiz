@@ -17,10 +17,9 @@ public class MainActivity extends LoggingActivity {
     private static final String KEY_ALL_ANSWERS = "key_all_answers";
     private static final int REQUEST_CODE_CHEAT = 42;
 
-    //Is it OK to make these constants not private?
-    static final int CORRECT_ANSWER = 1;
-    static final int INCORRECT_ANSWER = -1;
-    static final int NOT_ANSWERED = 0;
+    private static final int ANSWER_CORRECT = 1;
+    private static final int ANSWER_INCORRECT = -1;
+    private static final int NOT_ANSWERED = 0;
 
     private TextView questionView;
     private Button trueButton;
@@ -29,7 +28,7 @@ public class MainActivity extends LoggingActivity {
     private Button cheatButton;
     private Button statsButton;
 
-    private Question[] mQuestionBank = new Question[] {
+    private Question[] mQuestionBank = new Question[]{
             new Question(R.string.question_australia, true),
             new Question(R.string.question_oceans, true),
             new Question(R.string.question_mideast, false),
@@ -101,7 +100,7 @@ public class MainActivity extends LoggingActivity {
         statsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(StatsActivity.makeIntent(MainActivity.this, allAnswers));
+                showStats();
             }
         });
 
@@ -137,9 +136,9 @@ public class MainActivity extends LoggingActivity {
         boolean wasTheAnswerCorrect = currentAnswer == getCurrentQuestion().getCorrectAnswer();
 
         if (wasTheAnswerCorrect) {
-            allAnswers[currentQuestionIndex] = CORRECT_ANSWER;
+            allAnswers[currentQuestionIndex] = ANSWER_CORRECT;
         } else {
-            allAnswers[currentQuestionIndex] = INCORRECT_ANSWER;
+            allAnswers[currentQuestionIndex] = ANSWER_INCORRECT;
         }
 
         showToast(wasTheAnswerCorrect ? R.string.correct_toast : R.string.incorrect_toast);
@@ -148,4 +147,25 @@ public class MainActivity extends LoggingActivity {
     private void showToast(int textId) {
         Toast.makeText(MainActivity.this, textId, Toast.LENGTH_SHORT).show();
     }
+
+    private void showStats() {
+        int answeredQuestions = 0;
+        int correctAnswers = 0;
+
+        for (int currentAnswer : allAnswers) {
+            if (currentAnswer == ANSWER_CORRECT) {
+                answeredQuestions++;
+                correctAnswers++;
+            } else if (currentAnswer == ANSWER_INCORRECT) {
+                answeredQuestions++;
+            }
+        }
+
+        startActivity(StatsActivity.makeIntent(
+                MainActivity.this,
+                answeredQuestions,
+                mQuestionBank.length,
+                correctAnswers));
+    }
+
 }
