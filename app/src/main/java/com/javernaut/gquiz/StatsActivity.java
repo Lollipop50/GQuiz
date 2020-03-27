@@ -9,40 +9,34 @@ import android.widget.TextView;
 
 public class StatsActivity extends LoggingActivity {
 
-    private static final String KEY_ALL_ANSWERS = "key_all_answers";
-
-    private int answeredQuestions = 0;
-    private int correctAnswers = 0;
+    private static final String KEY_ANSWERED_QUESTIONS = "key_answered_questions";
+    private static final String KEY_NUMBER_OF_QUESTIONS = "key_number_of_questions";
+    private static final String KEY_CORRECT_ANSWERS = "key_correct_answers";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stats);
 
-        int[] allAnswers = getIntent().getIntArrayExtra(KEY_ALL_ANSWERS);
-        countStats(allAnswers);
-
         TextView statsView = findViewById(R.id.stats_view);
-        statsView.setText("Answered: " + answeredQuestions + "/" + allAnswers.length + "\n" +
-                "Correct answers: " + correctAnswers);
+
+        statsView.setText(generateStatsText(
+                getIntent().getIntExtra(KEY_ANSWERED_QUESTIONS, 0),
+                getIntent().getIntExtra(KEY_NUMBER_OF_QUESTIONS, 0),
+                getIntent().getIntExtra(KEY_CORRECT_ANSWERS, 0)));
     }
 
-    public static Intent makeIntent(Context context, int[] allAnswers) {
+    public static Intent makeIntent(Context context, int answeredQuestions, int numberOfQuestions, int correctAnswers) {
         Intent intent = new Intent(context, StatsActivity.class);
-        intent.putExtra(KEY_ALL_ANSWERS, allAnswers);
+        intent.putExtra(KEY_ANSWERED_QUESTIONS, answeredQuestions);
+        intent.putExtra(KEY_NUMBER_OF_QUESTIONS, numberOfQuestions);
+        intent.putExtra(KEY_CORRECT_ANSWERS, correctAnswers);
         return intent;
     }
 
-    private void countStats(int[] allAnswers) {
-        for (int index = 0; index < allAnswers.length; index++) {
-            int currentAnswer = allAnswers[index];
-
-            if (currentAnswer == MainActivity.CORRECT_ANSWER) {
-                answeredQuestions++;
-                correctAnswers++;
-            } else if (currentAnswer == MainActivity.INCORRECT_ANSWER) {
-                answeredQuestions++;
-            }
-        }
+    private String generateStatsText(int answeredQuestions, int numberOfQuestions, int correctAnswers) {
+        return ("Answered: " + answeredQuestions + "/" + numberOfQuestions + "\n" +
+                "Correct answers: " + correctAnswers);
     }
+
 }
