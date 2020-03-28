@@ -135,11 +135,7 @@ public class MainActivity extends LoggingActivity {
     private void onAnswerSelected(boolean currentAnswer) {
         boolean wasTheAnswerCorrect = currentAnswer == getCurrentQuestion().getCorrectAnswer();
 
-        if (wasTheAnswerCorrect) {
-            allAnswers[currentQuestionIndex] = ANSWER_CORRECT;
-        } else {
-            allAnswers[currentQuestionIndex] = ANSWER_INCORRECT;
-        }
+        allAnswers[currentQuestionIndex] = (wasTheAnswerCorrect ? ANSWER_CORRECT : ANSWER_INCORRECT);
 
         showToast(wasTheAnswerCorrect ? R.string.correct_toast : R.string.incorrect_toast);
     }
